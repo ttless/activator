@@ -12,7 +12,7 @@
 		<title>Typesafe Activator</title>
 		<!-- Initialize global Javascript values... -->
 		<script type="text/javascript">
-			var debug = true;
+			window.debug = true;
 			var baseFolder = @Html(JsString(model.userHome).toString())
 			var separator = @Html(JsString(File.separator).toString())
 			var wsUrl = '@webSocketURLWithCSRF(routes.Application.homeStream)';
@@ -26,7 +26,7 @@
 	<body>
 
     <h1><strong class="typesafe">Typesafe</strong> <span>Activator</span></h1>
-    
+
     @flash.get("error").map { error =>
         <script>alert("@error")</script>
     }
@@ -43,16 +43,28 @@
 
 		<section id="new">
 			<div class="half">
-				<header>
-					<h2>Activator Templates</h2>
+				<header class="tabs">
+					<h2 data-bind="click: showTemplates, css: {active: openedTab() == 'templates'}">Tutorials</h2>
+					<h2 data-bind="click: showSkeletons, css: {active: openedTab() == 'skeletons'}">Boilerplate</h2>
 				</header>
-				<aside id="filter">
-					<span class="clear" data-bind="click: clearSearch">×</span>
-					<input type="text" placeholder="Filter templates" data-bind="value: filterValue, event: {  keyup: search, change: search }" />
-				</aside>
-				<article>
+				<article id="templateList" data-bind="visible: openedTab() == 'templates'">
+					<aside id="filter">
+						<span class="clear" data-bind="click: clearSearch">×</span>
+						<input type="text" placeholder="Filter templates" data-bind="value: filterValue, event: {  keyup: search, change: search }" />
+					</aside>
 					<ul class="list" data-bind="foreach: filteredTemplates">
 						<li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseTemplate">
+							<input type="radio" name="template" data-bind="value: id">
+							<span data-bind="text: title"></span>
+							<ul class="tags" data-bind="foreach: tags">
+								<li data-bind="text: $data"></li>
+							</ul>
+						</li>
+					</ul>
+				</article>
+				<article id="skeletonList" data-bind="visible: openedTab() == 'skeletons'">
+					<ul class="list" data-bind="foreach: skeletons">
+						<li class="template" data-bind="css: {featured: featured, active: $root.currentAppId() == id}, click: $root.chooseSkeleton">
 							<input type="radio" name="template" data-bind="value: id">
 							<span data-bind="text: title"></span>
 							<ul class="tags" data-bind="foreach: tags">
@@ -105,7 +117,7 @@
 			<!-- ko ifnot:currentApp -->
 			<div id="welcome" class="half right">
 				<h3>Create a new app</h3>
-                <p>You will be learning and writing code in seconds...</p>
+        <p>You will be learning and writing code in seconds...</p>
 				<ol class="steps">
 					<li>Choose a template</li>
 					<li>Specify a location</li>

@@ -43,6 +43,13 @@ var handleVisibilityChange = function() {
   }
 }
 
+var skeletons = templates.filter(function(t){
+  return t.tags.indexOf('skeleton') >= 0;
+});
+templates = templates.filter(function(t){
+  return t.tags.indexOf('skeleton') < 0;
+});
+
 var startApp = function() {
   require([
   'commons/streams',
@@ -64,6 +71,7 @@ var startApp = function() {
         var self = this;
 
         self.filteredTemplates = ko.observableArray(templates);
+        self.skeletons = skeletons;
         self.currentApp = ko.observable();
         self.currentAppId = ko.computed(function(){
           return !!self.currentApp()?self.currentApp().id:"";
@@ -72,6 +80,9 @@ var startApp = function() {
         self.filterValue = ko.observable("");
 
         self.chooseTemplate = function(app){
+          self.currentApp(app)
+        }
+        self.chooseSkeleton = function(app){
           self.currentApp(app)
         }
         self.closeTemplate = function(){
@@ -97,6 +108,15 @@ var startApp = function() {
         }
         self.closeNewBrowser = function() {
           $("#newAppLocationBrowser").hide();
+        }
+        self.openedTab = ko.observable('templates');
+        self.showTemplates = function() {
+          //
+          self.openedTab('templates');
+        }
+        self.showSkeletons = function() {
+          //
+          self.openedTab('skeletons');
         }
       };
 
